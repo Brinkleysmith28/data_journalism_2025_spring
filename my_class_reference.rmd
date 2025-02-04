@@ -31,9 +31,23 @@ library(tidyverse)
 ```
 
 ```{r}
+# This is a comment inside of a codeblock. Comments doesn't run when we run the codeblock.
+# Adding this command is a good way to start your class reference notebook.
+library(tidyverse)
+```
+
+```{r}
+# obs is short for observation, which is another way of saying rows or records.
+```
+
+```{r}
 
 
 #print will take a string and return it in the terminal 
 print("Hello world")
 
+```
+
+```{r}
+ #|>   the pipe operator; interpret this as "and then do this" for mac: cmd-shift-m 
 ```
