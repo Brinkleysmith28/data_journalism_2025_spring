@@ -29,7 +29,9 @@ The command to set a working directory is setwd(). For example, this sets the wo
 install.packages("tidyverse")
 library(tidyverse)
 ```
+
 ```{r}
+
 
 #print will take a string and return it in the terminal 
 print("Hello world")
