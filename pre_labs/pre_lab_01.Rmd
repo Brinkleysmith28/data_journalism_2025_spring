@@ -23,6 +23,10 @@ You also should update your class reference notebook with code examples and what
 ```{r}
 library(tidyverse)
 ```
+```{r}
+library(readr)
+library(dplyr)
+```
 
 The library function loads an R library such as the tidyverse, providing access to the verbs and functions that library contains. You have to load a library before you can use its functions.
 
@@ -225,13 +229,3 @@ maryland_winred_contributions |>
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted? **Answer: The min_amount and max_amount have now been added to the codeblock. This allows a user to see what the smallest and largest contribution made from each city was. **
-
-```{r}
-library(readr)
-library(dplyr)
-```
-
-```{r}
-install.packages("dplyr")
-```
-
