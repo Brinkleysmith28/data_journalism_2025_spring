@@ -342,4 +342,4 @@ So the month of June 2022 had the most expenditures by far in this data. We'll b
 
 Describe the values in the new `month` column - what do you think the data is showing here?
 
-**Answer: The data is showing the total campaign expenditures for each month. This can allow for analysis of campagin spending over the year.**
+**Answer: The data is showing the total campaign expenditures for each month. This can allow for analysis of campaign spending over the year.**
