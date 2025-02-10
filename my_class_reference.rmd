@@ -51,3 +51,41 @@ print("Hello world")
 ```{r}
  #|>   the pipe operator; interpret this as "and then do this" for mac: cmd-shift-m 
 ```
+
+```{r}
+#lubridate deals with month, day and year and allows functions for each of them and allows for the expansion of mathematical operations that can be performed when using date and time objects. Lubridate makes it easier to work with date and times that R already does but it also allows to complete tasks that R can't do. 
+```
+
+```{r}
+#head( ) shows the first few rows of a dataset, typically the first 6 rows by default
+#summary( ) provides the summary of each column in a dataset 
+#colnames( ) returns or sets the names of the columns in a dataset 
+#glimpse( ) allows for a quick overview of a dataset showing column names, data types, and a preview of values 
+```
+
+```{r}
+#*100 turns the decimal into a percentage which makes it easier to read
+#arrange(desc) allows for the highest number of a specific column to be displayed at the top. 
+```
+
+```{r}
+# `str_to_upper` that will convert a character column into all uppercase.
+```
+
+```{r}
+#Filtering creates a subset of the data based on criteria. Filtering works with rows -- when we filter, we get fewer rows back than we start with.
+#Selecting simply returns only the fields named. Selecting works with columns. You will have the same number of records when you are done, but fewer columns of data to work with.
+```
+
+```{r}
+#The comparison operators in R, like most programming languages, are == for equal to, != for not equal to, \> for greater than, \>= for greater than or equal to and so on.
+
+#Be careful: `=` is not `==` and `=` is not "equal to". `=` is an assignment operator in most languages -- how things get named.
+```
+
+```{r}
+# OR is additive; AND is restrictive.
+
+#A general tip about using filter: it's easier to work your way towards the filter syntax you need rather than try and write it once and trust the result. Each time you modify your filter, check the results to see if they make sense. This adds a little time to your process but you'll thank yourself for doing it because it helps avoid mistakes.
+```
+
