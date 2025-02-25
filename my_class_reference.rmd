@@ -89,3 +89,26 @@ print("Hello world")
 #A general tip about using filter: it's easier to work your way towards the filter syntax you need rather than try and write it once and trust the result. Each time you modify your filter, check the results to see if they make sense. This adds a little time to your process but you'll thank yourself for doing it because it helps avoid mistakes.
 ```
 
+```{r}
+#Mutate changes the <chr> to <dbl> and allowed a specific range.
+```
+
+```{r}
+#clean names:changes and cleans up names of columns in a data frame.
+```
+
+```{r}
+#rename: allows a user to easily change the names of variables in the data frame.
+```
+
+```{r}
+#distinct(): allows a user to keep only one copy of each unique record.
+```
+
+```{r}
+#str_to_title(): converts string to title case. Each first letter is capitalized, the rest are lowercase.
+```
+
+```{r}
+#case_when(): allows users to change a value if it meets a certain comdition. If it doesn't meet that condition then don't change it.
+```
