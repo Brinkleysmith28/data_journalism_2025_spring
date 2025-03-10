@@ -47,12 +47,10 @@ You'll need to load one data set, a CSV file of campaign expenditures located in
 # Load the Maryland expenditures data table
 
 # Load data
-md_senate_expenses <- read_csv("data/md_senate_expenses.csv")
+clean_md_senate_expenses <- read_csv("data/clean_md_senate_expenses.csv")
 
 # Display it
-md_senate_expenses
-
-
+clean_md_senate_expenses
 ```
 
 ## Answer questions
@@ -65,31 +63,81 @@ Then, when you are done standardizing `purpose_clean`, export it as a new CSV fi
 
 Then, using that `purpose_clean` column, write code to find the largest amounts of spending on categories by both campaigns.
 
-**A1.**
+**A1: Grassroots Media and Break Something Inc both had the largest amount of spending under advertising, specifically media and online advertising.**
 
 ```{r}
+
+# Check the first few rows
+head(clean_md_senate_expenses)
+
+# Summarize total spending per category
+category_spending <- clean_md_senate_expenses %>%
+  group_by(purpose_clean) %>%
+  summarise(total_spent = sum(amount, na.rm = TRUE)) %>%
+  arrange(desc(total_spent))
+
+# Display the top 10 spending categories
+print(head(category_spending, 10))
+
 
 ```
 
 **Q2.** Let's do some research on the top purposes from A1. Feel free to search the Web to understand those terms better if need be, and then write a description comparing and contrasting the two campaigns' largest categories of spending.
 
-**A2.**
+**A2: Both campaigns focus on spedning their money in advertisements. One focuses on a more traditional method, the grassroot method while the other one focuses on. Break Something takes a more "intense approach" and use different advertising techniques.**
 
 **Q3.** Pick one of the top categories for each campaign and write code that shows how that spending has changed over time, if at all. You'll need to use lubridate for this. Write a couple of sentences describing that pattern.
 
-**A3.**
+**A3: The spending pattern follows a pre-election ramp-up strategy that shows little spending early on. However, there was a rise in spending going into election season with some gradual declines post peak election.The April 2024 peak suggests that campaigns strategically allocated major resources close to the election for maximum impact.**
 
 ```{r}
 
+# Load required libraries
+library(dplyr)
+library(lubridate)
+
+# Read the clean dataset
+df <-  read_csv("data/clean_md_senate_expenses.csv")
+
+# Convert the 'date' column to Date format
+df$date <- ymd(df$date)
+
+# Check if conversion worked
+str(df$date)
+
+# Filter for Advertising spending and analyze spending over time
+advertising_spending <- df %>%
+  filter(purpose_clean == "Advertising") %>%
+  group_by(month = floor_date(date, "month")) %>%
+  summarize(amount = sum(amount, na.rm = TRUE))
+
+# Print results
+print(advertising_spending)
 
 ```
+
+
+
 
 **Q4.** Which committee has the larger payroll or salary spending so far? How many unique recipients of payroll/staff spending are there for each candidate?
 
 **A4.**
 
 ```{r}
+# Ensure necessary libraries are loaded
+library(dplyr)
 
+# Filter for Payroll/Salary spending
+payroll_spending <- clean_md_senate_expenses %>%
+  filter(purpose_clean) %>%
+  group_by(organization_name) %>%
+  summarize(
+    total_payroll = sum(amount),
+    unique_recipients = n_distinct(recipient)
+  )
+
+# Print payroll spending by committee
+print(payroll_spending)
 ```
 
 **Q5** What's the most interesting story idea you've found in this data?
