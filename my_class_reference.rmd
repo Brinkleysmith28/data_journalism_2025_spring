@@ -112,3 +112,12 @@ print("Hello world")
 ```{r}
 #case_when(): allows users to change a value if it meets a certain comdition. If it doesn't meet that condition then don't change it.
 ```
+
+```{r}
+#bind_rows added together all of the columns with the year in chronological order.
+```
+
+```{r}
+#Taken from lab. "There are different kinds of joins. It’s better if you think of two tables sitting next to each other. A left_join takes all the records from the left table and only the records that match in the right one. A right_join does the same thing. An inner_join takes only the records where they are equal. There’s one other join – a full_join which returns all rows of both, regardless of if there’s a match – but I’ve never once had a use for a full join."
+```
+
