@@ -63,7 +63,7 @@ Then, when you are done standardizing `purpose_clean`, export it as a new CSV fi
 
 Then, using that `purpose_clean` column, write code to find the largest amounts of spending on categories by both campaigns.
 
-**A1: Grassroots Media and Break Something Inc both had the largest amount of spending under advertising, specifically media and online advertising.**
+**A1: The largest amounts of spending from both categories fell under advertising. Alsobrooks spending approximately $4.7 million and Hogan spending approximately $2.5 million on advertising.**
 
 ```{r}
 
@@ -72,7 +72,7 @@ head(clean_md_senate_expenses)
 
 # Summarize total spending per category
 category_spending <- clean_md_senate_expenses %>%
-  group_by(purpose_clean) %>%
+  group_by(purpose_clean, candidate) %>%
   summarise(total_spent = sum(amount, na.rm = TRUE)) %>%
   arrange(desc(total_spent))
 
@@ -84,7 +84,16 @@ print(head(category_spending, 10))
 
 **Q2.** Let's do some research on the top purposes from A1. Feel free to search the Web to understand those terms better if need be, and then write a description comparing and contrasting the two campaigns' largest categories of spending.
 
-**A2: Both campaigns focus on spedning their money in advertisements. One focuses on a more traditional method, the grassroot method while the other one focuses on. Break Something takes a more "intense approach" and use different advertising techniques.**
+```{r}
+clean_md_senate_expenses|>
+filter(purpose_clean == 'Advertising')|>
+group_by(candidate, organization_name)|>
+summarise(total_spent = sum(amount))|>
+arrange(desc(total_spent))
+
+```
+
+**A2: Both campaigns focus on spending their money in advertisements. Alsobrooks spent approximately $1.6 million more on advertising  compared to Hogan. Alsobrooks spent the advertising money with a company called Grassroots Media. Hogan spent the most advertising money with a company called M2 Placement.**
 
 **Q3.** Pick one of the top categories for each campaign and write code that shows how that spending has changed over time, if at all. You'll need to use lubridate for this. Write a couple of sentences describing that pattern.
 
@@ -110,6 +119,7 @@ advertising_spending <- df %>%
   filter(purpose_clean == "Advertising") %>%
   group_by(month = floor_date(date, "month")) %>%
   summarize(amount = sum(amount, na.rm = TRUE))
+  
 
 # Print results
 print(advertising_spending)
@@ -121,25 +131,22 @@ print(advertising_spending)
 
 **Q4.** Which committee has the larger payroll or salary spending so far? How many unique recipients of payroll/staff spending are there for each candidate?
 
-**A4.**
+**A4. Alsobrooks has the larger payroll/spending so far. Alsobrooks has three unique recipients while Hogan has zero. **
 
 ```{r}
-# Ensure necessary libraries are loaded
-library(dplyr)
-
-# Filter for Payroll/Salary spending
-payroll_spending <- clean_md_senate_expenses %>%
-  filter(purpose_clean) %>%
-  group_by(organization_name) %>%
-  summarize(
-    total_payroll = sum(amount),
-    unique_recipients = n_distinct(recipient)
+# Ensure all candidates are included, even if they have no payroll spending
+payroll_summary <- clean_md_senate_expenses %>%
+  group_by(candidate) %>%  # Group before filtering
+  summarise(
+    total_payroll = sum(amount[purpose_clean %in% c("Payroll and Salary")], na.rm = TRUE),
+    unique_recipients = n_distinct(organization_name[purpose_clean %in% c("Payroll and Salary")])
   )
 
 # Print payroll spending by committee
-print(payroll_spending)
+print(payroll_summary)
+
 ```
 
 **Q5** What's the most interesting story idea you've found in this data?
 
-**A5**
+**A5 Why is there such a disparity between Alsobrooks and Hogan. I would want to look at why Alsobrooks has three unique recipients where she has spent over $1.26 million whereas Hogan has zero unique recipients  and have spent money. Additionally, I could look into campaign strategies.**
