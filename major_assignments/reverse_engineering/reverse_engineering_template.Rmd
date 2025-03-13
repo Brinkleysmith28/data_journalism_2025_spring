@@ -1,7 +1,7 @@
 ---
 title: "Reverse Engineering Project"
-author: "Student names here"
-date: "Date here"
+author: "Brinkley Smith"
+date: "March 12 2025"
 output:
   html_document:
     theme: cerulean
@@ -18,14 +18,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction 
 
-In this notebook, we are reverse engineering the story, [STORY NAME](STORY URL)
-
+In this notebook, we are reverse engineering the story, [CEOs gave heavily during legislative session, exposing loophole in NC's fundraising ban](https://www.wral.com/in-session-campaign-donations/17716104/)
 ## Load libraries
 
 Loading required libraries for this analysis.
 
 ```{r echo=FALSE, message=FALSE}
-
+# turn off sci notation
+options(scipen=999)
+library(tidyverse)
+library(lubridate)
+library(refinr)
+library(dplyr)
+library(janitor)
 ```
 
 ## Load and Cleaning Data
@@ -34,32 +39,81 @@ In this section, describe the source of the data, write a basic data dictionary 
 
 ```{r}
 # Load required data
-
+donors <- read_csv("data/donors0103-0701.csv")
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
-
-# Clean required data and prepare for analysis if needed. 
-
-
 ```
+
+```{r}
+donors <-donors |>
+  mutate(
+    amount = str_remove_all(amount, "\\$"),
+    amount = str_remove_all(amount, ",")
+  )
+glimpse(donors)
+```
+
+
+```{r}
+# Clean required data and prepare for analysis if needed. 
+donors <- donors |>
+  mutate(date = mdy(date))|>
+  mutate(amount =as.numeric(amount))|>
+  mutate(zip = str_sub(zip, start = 1L, end = 5L)) |>
+  mutate(committee_zip = str_sub(committee_zip, start = 1L, end = 5L))
+```
+
+```{r}
+glimpse(donors)
+```
+
 
 ## Sentences to Engineer
 In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “Add in the week before session began, and the two businessmen gave more than $87,000 to Republican legislators and the North Carolina Republican Party, a key cog in the campaign machine this year as the two major parties fight for control of the General Assembly in November's elections.”
+
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
+
+
 ```{r}
-# Put code to reverse engineer sentence here
+donors <- donors |>
+  rename(
+    name_clean = "name-clean"
+  )
 
-# Display results of code below this codeblock
+```
 
+```{r}
+  donors |>
+  group_by(committee_name)|>
+  summarise(amount = sum(amount)) |>
+  arrange(desc(amount))
+
+```
+
+```{r}
+donors |>
+  filter(name_clean == "GEORGE LEWIS STROBEL II" | name_clean == "ROBIN E DELMER") |>
+  group_by(name_clean) |>
+  summarise(amount = sum(amount)) |>
+  arrange(desc(amount))
+```
+
+```{r}
+donors |>
+  filter(date >= "2018-01-03" & date <= "2018-01-09") |>
+  group_by(name) |>
+  summarise(amount) |>
+  arrange(desc(amount))
 ```
 
 ### Sentence 2
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “This year's legislative session also saw significant donations from hog farmers and beer distributors, both industries with important legislation before the General Assembly. Senate President Pro Tem Phil Berger's campaign alone raised nearly $222,000 during session. Twenty-three people gave him the maximum allowed:$5,200.”
+
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -71,7 +125,8 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 3
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “All told during the six-week General Assembly session, more than $1.1 million flowed into state legislators' campaign accounts. That's a conservative figure, reached by backing out money that simply flowed from one politician's campaign to another and money elected officials put into their own campaigns.”
+
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -83,7 +138,8 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 4
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “Add in donations to the two main political parties and to a handful of other large fundraising vehicles for state legislative races, and the in-session giving topped $3.4 million. Gov. Roy Cooper's main campaign account brought in another $407,000 during session.”
+
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -95,7 +151,8 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 5
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “A WRAL News analysis of campaign finance filings also turned up $16,000 in donations to legislative campaigns during session from 15 PACs with a lobbyist. Each would appear to be a violation of state fundraising rules, but spokespeople for most of the PACs, or the companies they represent, said there was a simple explanation: The checks were written before session.”
+
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
