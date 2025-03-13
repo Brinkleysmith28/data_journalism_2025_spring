@@ -74,7 +74,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 * **Sentence text**: “Add in the week before session began, and the two businessmen gave more than $87,000 to Republican legislators and the North Carolina Republican Party, a key cog in the campaign machine this year as the two major parties fight for control of the General Assembly in November's elections.”
 
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: The results of my analysis allowed for the grouping of the contributions of George Lewis Strobel II and Robin E Delmer. The amounts from each of them were presented too and it exceeded the $87,000. So yes, I was able to confirm the findings. 
 
 
 
