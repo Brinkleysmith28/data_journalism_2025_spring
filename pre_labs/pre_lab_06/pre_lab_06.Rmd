@@ -97,7 +97,7 @@ You can now export that extracted table to a CSV file using the "Export" button.
 
 ### Task 5: Export the CSV file
 
-**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data? **Answer**
+**Task** Export the CSV file to your pre_lab_06 folder and read it into R by running the following codeblock. What problems do you see with the data? **Answer: There are columns that appear to be possibly misaligned and there are also issues with naming for the columns. There are also several NA.**
 
 ```{r}
 benzie_2024 <- read_csv("tabula-Benzie Aug 6,2024 Official Precinct Results.csv")
@@ -113,7 +113,7 @@ Then we've got rows with NAs, plus office names mixed up with candidate names. L
 
 ### Task 6: Cleaning up & getting rid of rows we don't need
 
-**Task** Get rid of rows we don't need by running the codeblock below. What problems remain? **Answer**
+**Task** Get rid of rows we don't need by running the codeblock below. What problems remain? **Answer: Ther is still headers that aren't correct such as all the "x" ones. The lgl column existing with all the NA.**
 
 ```{r}
 benzie_2024 <- read_csv("tabula-Benzie Aug 6,2024 Official Precinct Results.csv", col_names = FALSE)
@@ -129,7 +129,7 @@ Ok, now we have numbers and candidates, but we still need better headers and a w
 
 ### Task 7: Making a party column, changing headers and adding an office column.
 
-**Task** Run the codeblock below. What changed, and what issues or problems remain? **Answer**
+**Task** Run the codeblock below. What changed, and what issues or problems remain? **Answer: The party column was created, new column headers were appropriately assigned, the office column was created, and now the office column was moved to the front which makes the data appear easier to read and makes it more organized. There is a warning that was issued that says, "expected 2 pieces. Missing pieces filled with 'NA' in 1 rows[1]." There's also still several "X" columns **
 
 ```{r}
 benzie_2024 <- benzie_2024 |>
