@@ -94,6 +94,7 @@ donors <- donors |>
 
 ```
 
+
 ```{r}
 donors |>
   filter(name_clean == "GEORGE LEWIS STROBEL II" | name_clean == "ROBIN E DELMER") |>
@@ -101,6 +102,7 @@ donors |>
   summarise(amount = sum(amount)) |>
   arrange(desc(amount))
 ```
+#add code here
 
 ```{r}
 donors |>
@@ -112,20 +114,27 @@ donors |>
 
 ### Sentence 2
 
-* **Sentence text**: “This year's legislative session also saw significant donations from hog farmers and beer distributors, both industries with important legislation before the General Assembly. Senate President Pro Tem Phil Berger's campaign alone raised nearly $222,000 during session. Twenty-three people gave him the maximum allowed:$5,200.”
+* **Sentence text**: “Senate President Pro Tem Phil Berger's campaign alone raised nearly $222,000 during session. Twenty-three people gave him the maximum allowed:$5,200.”
 
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: We were able to confirm the findings when we filtered for Berger's campaign the dates of the short sessions and the amount given 5200 we got 23 rows. This number proves the sentence above saying that there was 23 individual donations or people that donated the max amount allowed equaling $222,000.
 
 ```{r}
 # Put code to reverse engineer sentence here
+# legislative short session May 16 to July 4, 2018.
+berger <- donors |>
+  filter(date >= '2018-05-16' & date <= '2018-06-29') |>
+  filter(committee_name == "PHILIP E BERGER COMM") |>
+  filter(amount == 5200) |>
+  group_by(name_clean, date, amount) |>
+  summarise(sum(amount))
 
-# Display results of code below this codeblock
-
+print(berger)
 ```
+
 
 ### Sentence 3
 
-* **Sentence text**: “All told during the six-week General Assembly session, more than $1.1 million flowed into state legislators' campaign accounts. That's a conservative figure, reached by backing out money that simply flowed from one politician's campaign to another and money elected officials put into their own campaigns.”
+* **Sentence text**: “Beer distributors also gave during session. Mark Craig, the president of distributor R.H. Barringer, put more than $30,000 into state legislative campaigns during the six-week period, including the maximum $5,200 to Berger. He was the top individual donor to legislative campaigns during session."
 
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
