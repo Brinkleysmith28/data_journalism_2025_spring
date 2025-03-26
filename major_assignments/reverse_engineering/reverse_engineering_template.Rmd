@@ -116,7 +116,7 @@ donors |>
 
 * **Sentence text**: “Senate President Pro Tem Phil Berger's campaign alone raised nearly $222,000 during session. Twenty-three people gave him the maximum allowed:$5,200.”
 
-* **Analysis summary**: We were able to confirm the findings when we filtered for Berger's campaign the dates of the short sessions and the amount given 5200 we got 23 rows. This number proves the sentence above saying that there was 23 individual donations or people that donated the max amount allowed equaling $222,000.
+* **Analysis summary**: We were able to confirm the findings when we filtered for Berger's campaign the dates of the short sessions and the amount given 5200 we got 23 rows. This number proves the sentence above saying that there was 23 individual donations or people that donated the max amount allowed equaling $222,000. 
 
 ```{r}
 # Put code to reverse engineer sentence here
