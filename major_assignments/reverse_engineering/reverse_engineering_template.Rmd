@@ -120,7 +120,7 @@ donors |>
 
 ```{r}
 # Put code to reverse engineer sentence here
-# legislative short session started May 16
+# legislative short session started May 16/0
 berger <- donors |>
   filter(date >= '2018-05-16' & date <= '2018-06-29') |>
   filter(committee_name == "PHILIP E BERGER COMM") |>
