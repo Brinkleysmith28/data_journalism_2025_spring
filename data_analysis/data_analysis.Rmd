@@ -22,7 +22,7 @@ library(janitor)
 
 
 ```{r}
-independent_expenditure <- read_csv("/Users/brinkleysmith/Documents/GitHub/data_journalism_2025_spring/data_analysis/data/independent_expenditure_2024.csv")
+independent_expenditure <- read_csv("data/independent_expenditure_2024.csv")
 #I want to note that I need help making the universal file path because I was having no luck running the file that way despite everything being where it is supposed to be
 ```
 
