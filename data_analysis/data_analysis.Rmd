@@ -24,9 +24,12 @@ library(janitor)
 ```{r}
 independent_expenditure <- read_csv("data/independent_expenditure_2024.csv")
 ```
+```{r}
+clean_independent_expenditure <- read_csv("data/clean_independent_expenditure_2024.csv")
+```
 
 ```{r}
-independent_expenditure <- independent_expenditure |>
+clean_independent_expenditure <- clean_independent_expenditure |>
   clean_names() |>
   rename(
     candidate_id = cand_id,
@@ -53,7 +56,26 @@ independent_expenditure <- independent_expenditure |>
     previous_file_number = prev_file_num,
     dissemination_date = dissem_dt
   )
-
 ```
+
 There are 23 columns and 72,971 rows. This data represents all of the independent expenditure spending by candidates/committees from 2023-2024. The sheer amount of data might be limiting because there could be errors in the data. It also accounts for all types of races, so to compare certain types of expenditures would require a lot of filtering. Our questions might be hard to answer in terms of finding average spending because of the amount of data. Additionally, comparing geographical spending compared to other years will be hard because the dataset lacks geographical information.
 We're gonna need to turn the dates numerical to analyze them better. There also seems to be spelling errors after we ran clean names. We'll need to find definitions for the candidate ID, spe_id, can_office_dis, sup_opp, pur, amndt_ind, and image_num. The FEC has a github which gives many descriptions, so we'll need to input those definitions to make the data clearer.
+
+##Question 1: Which presidential candidates have spent the most during their campaign? Who has spent the least? Answer: Jon Tester is the candidate that has spent the most during the campaign. There are eight candiates though that are tied for the least amount of money spent on their campaign. 
+
+```{r}
+clean_independent_expenditure |>
+  group_by(candidate_name) |>
+  summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
+  arrange(desc(total))
+```
+
+#Question 5: How are Republicans and Democrats spending their money differently? What are each party’s top spending points? 
+Answer: Democrats spent a lot of money on television ads, radio and media production. Republicans spent a lot of money on data harvesting. The Democrats top spending point was PLACED MEDIA: TV. The Republicans top spending point was Data Harvesting.
+
+```{r}
+clean_independent_expenditure |>
+  group_by(candidate_party, expenditure_amount, purpose) |>
+  summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
+  arrange(desc(total))
+```
