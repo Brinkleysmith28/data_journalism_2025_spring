@@ -37,7 +37,7 @@ Let's explore the election results from last night and make some maps!
 
 **Q1.** Make a county-level map of Maryland's results for U.S. Senate using `md_senate_county_24.csv` in the data folder, calculating the difference between Angela Alsobrooks's percentage of the total votes and Larry Hogan's percentage of the total votes and displaying that percentage difference on the map. What is the story here, and what is the county with the most interesting results?
 
-**A1: **
+**A1: The biggest difference came from Baltimore City and Prince George's County. The counties that are surrounding PG don't have as large of a difference. I would be curious to know what Hogan and Alsobrooks did in those surrounding counties.**
 
 ```{r}
 md_senate <- read_csv("data/md_senate_county_24.csv") |>
@@ -63,27 +63,128 @@ theme_minimal()
 
 Also answer this: is a map the best way to present this data? What else could you make that might convey more information?
 
-**A2.**
+**A2: Hogan did appear to do better than Trump. Howard, Anne Arundel and, Montgomery were some of Hogan's strongest margins. I would describe the map as a good way to see geographic patterns. However, it is still a bit confusing and I think there is an easier way to present the data. I think a bar chart or a scatter plot would be better for looking at comparisons. **
 
 ```{r}
-md_president <- read_csv("data/md_pres_county_24.csv")
+# Load presidential results
+md_president <- read_csv("data/md_pres_county_24.csv") |>
+  mutate(GEOID = as.character(GEOID),
+         total_votes = Harris + Trump + Oliver + Stein + Kennedy,
+         trump_pct = Trump / total_votes * 100)
 
-md_president <- md_president|>
-  
+# Load counties and original Hogan data
+md_counties <- counties(state = "MD") |>
+  mutate(GEOID = as.character(GEOID))
+
+# Join with Hogan results from Q1
+md_hogan <- md_senate |>
+  select(GEOID, percent_hogan) 
+
+# Merge Trump and Hogan results
+trump_vs_hogan <- md_president |>
+  inner_join(md_hogan, by = "GEOID") |>
+  mutate(difference = trump_pct - percent_hogan)
+
+# Join with geometry for mapping
+md_trump_hogan_map <- md_counties |>
+  inner_join(trump_vs_hogan, by = "GEOID")
+
+ggplot(md_trump_hogan_map) +
+  geom_sf(aes(fill = difference),color="black" ) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +  
+  labs(
+    title = "Trump vs. Hogan Performance by County",
+    fill = "Trump % - Hogan %"
+  ) +
+  theme_minimal()
 ```
 
 **Q3** Make another map showing the difference between Larry Hogan's county-level performance this year and from his governor race in 2018, using percentages to compare the two as you did in Q2. You can use the dataframe you initially loaded for Q1, and you'll need to load the 2018 governor results in the data folder and join them to it before proceeding. Are there any counties where Hogan did better this year? How would you describe the map showing the difference?
 
-**A3**
+**A3: Talbot County had the largest difference, dropping -17.33% followed by Anne Arundel and Baltimore County. There wasn't any counties where Hogan did better this year. The lighter spots show the biggest drops.**
 
 ```{r}
+# Load 2018 governor results
+md_gov_2018 <- read_csv("data/md_gov_county_18.csv") |>
+  mutate(
+    GEOID = as.character(GEOID),
+    total_votes_2018 = Hogan + Jealous,
+    hogan_pct_2018 = Hogan / total_votes_2018 * 100
+  )
+
+# Use 2024 results from md_senate (already loaded in Q1)
+md_hogan_2024 <- md_senate |>
+  select(GEOID, percent_hogan) |>
+  rename(hogan_pct_2024 = percent_hogan)
+
+# Join 2018 and 2024 data
+hogan_compare <- md_gov_2018 |>
+  inner_join(md_hogan_2024, by = "GEOID") |>
+  mutate(difference = hogan_pct_2024 - hogan_pct_2018)
+
+# Get county geometry
+md_counties <- counties(state = "MD") |>
+  mutate(GEOID = as.character(GEOID))
+
+# Join with geometry
+hogan_diff_map <- md_counties |>
+  inner_join(hogan_compare, by = "GEOID")
+
+# Plot the map
+ggplot(hogan_diff_map) +
+  geom_sf(aes(fill = difference), color = "black") +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs(
+    title = "Change in Hogan’s Vote Share: 2018 to 2024",
+    fill = "Hogan % 2024 – 2018"
+  ) +
+  theme_minimal()
 ```
 
 **Q4.** Choose your own map adventure! In the data folder I've included Maryland county-level results for the abortion rights amendment vote this year, plus the 2020 presidential results by county and 2022 governor's results by county. Using one of those and at least one other contest for comparison, make a county-level map showing what you think is the most interesting aspect of that data, and describe the results in terms of a possible story. You can bring in other data, such as Census information, if you like.
 
-**A4.**
+**A4: This map compares support for Maryland’s 2024 abortion rights amendment with Biden’s 2020 vote share by county. Most counties show higher support for the amendment than Biden received in 2020. This is really seen in right-leaning areas like Caroline and Garrett County. However, Prince George’s County stands out with a negative difference(the only negative oen), meaning a smaller percentage of voters supported the amendment than voted for Biden. This could suggest that some Biden voters there didn't support the amendment. I did use chat to help me to modify my ggplot code and help me fix my preexisting code when I got an error code and to help for my first mutate section.**
 
 ```{r}
+# Load and clean abortion results
+md_abortion <- read_csv("data/md_abortion_24.csv") |>
+  clean_names() |>
+  mutate(
+    percent_abortion_for = `for` / (`for` + against) * 100
+  ) |>
+  select(county, percent_abortion_for)
+
+# Load and clean 2020 presidential results
+md_presidential <- read_csv("data/md_pres_county_20.csv") |>
+  clean_names() |>
+  mutate(
+    total_votes = biden + trump + jorgensen + hawkins + segal,
+    percent_biden = biden / total_votes * 100,
+    geoid = as.character(geoid)
+  ) |>
+  select(geoid, county, percent_biden)
+
+# Load MD counties
+md_counties <- counties(state = "MD", class = "sf") |>
+  clean_names() |>
+  select(geoid, name, geometry) |>
+  rename(county = name)
+
+# Join and calculate difference
+md_comparison <- md_abortion |>
+  inner_join(md_presidential, by = "county") |>thi
+  inner_join(md_counties, by = "county") |>
+  mutate(abortion_biden_difference = percent_abortion_for - percent_biden)
+
+# Plot the map
+ggplot(md_comparison) +
+  geom_sf(aes(fill = abortion_biden_difference, geometry = geometry), color = "black") +
+  scale_fill_viridis_c(option = "plasma", direction = 1) +
+  labs(
+    title = "Abortion Amendment Support vs. Biden 2020 Vote (%)",
+    fill = "Abortion - Biden %"
+  ) +
+  theme_minimal()
 
 ```
 
