@@ -128,10 +128,67 @@ purpose_comparison
 ```
 
 
-#Question 4: How are donation patterns shifting geographically compared to 2020? 
+#Question 4: What PAC's donated in both the 2020 and 2024?
+Answer: PAC's that donated in both elections are:
+- American Crossroads				
+- Americans for Constitutional Liberty dba The Conservative Caucus				
+- End Citizens United				
+- Gun Rights America				
+- Indivisible Action				
+- MONTANA HUNTERS AND ANGLERS LEADERSHIP FUND				
+- MORE JOBS, LESS GOVERNMENT				
+- March On PAC				
+- Montana Rural Voters (WORC)				
+- NEA Advocacy Fund
 
+```{r}
+cleaned_2020_expenditures <- read_csv("data/cleaned_2020_expenditures.csv")
+```
+```{r}
+#cleaned the rest in Open Refine
+independent_expenditure_2020 <- cleaned_2020_expenditures |>
+  clean_names() |>
+  rename(
+    candidate_id = cand_id,
+    candidate_name = cand_name,
+    spender_id = spe_id,
+    spender_name = spe_nam,
+    election_type = ele_type,
+    candidate_state = can_office_state,
+    candidate_district = can_office_dis,
+    candidate_office = can_office,
+    candidate_party = cand_pty_aff,
+    expenditure_amount = exp_amo,
+    expenditure_date = exp_date,
+    aggregate_amount = agg_amo,
+    support_or_oppose = sup_opp,
+    purpose = pur,
+    payee = pay,
+    file_number = file_num,
+    amendment_indicator = amndt_ind,
+    transaction_id = tran_id,
+    image_number = image_num,
+    receipt_date = receipt_dat,
+    election_year = fec_election_yr,
+    previous_file_number = prev_file_num,
+    dissemination_date = dissem_dt
+  )
+```
 
+```{r}
+spenders_2020 <- independent_expenditure_2020|>
+  select(spender_name) |>
+  distinct()
 
+spenders_2024 <- clean_independent_expenditure |>
+  select(spender_name) |>
+  distinct()
+
+common_spenders <- inner_join(spenders_2020, spenders_2024, by = "spender_name")
+
+common_spenders
+
+```
 
 
 
