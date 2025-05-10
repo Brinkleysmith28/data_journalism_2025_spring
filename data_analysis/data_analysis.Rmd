@@ -24,12 +24,9 @@ library(janitor)
 ```{r}
 independent_expenditure <- read_csv("data/independent_expenditure_2024.csv")
 ```
-```{r}
-clean_independent_expenditure <- read_csv("data/clean_independent_expenditure_2024.csv")
-```
 
 ```{r}
-clean_independent_expenditure <- clean_independent_expenditure |>
+clean_independent_expenditure <- independent_expenditure |>
   clean_names() |>
   rename(
     candidate_id = cand_id,
@@ -58,7 +55,16 @@ clean_independent_expenditure <- clean_independent_expenditure |>
   )
 ```
 
-There are 23 columns and 72,971 rows. This data represents all of the independent expenditure spending by candidates/committees from 2023-2024. The sheer amount of data might be limiting because there could be errors in the data. It also accounts for all types of races, so to compare certain types of expenditures would require a lot of filtering. Our questions might be hard to answer in terms of finding average spending because of the amount of data. Additionally, comparing geographical spending compared to other years will be hard because the dataset lacks geographical information.
+### wrote to csv to clean in open refine
+
+```{r}
+#importing after cleaning in openrefine
+clean_independent_expenditure <- read_csv("data/updated_cleaned.csv")
+
+```
+
+
+There are 23 columns and 72,971 rows after we cleaned the data we had 1,761 rows. This data represents all of the independent expenditure spending by candidates/committees from 2023-2024. The sheer amount of data might be limiting because there could be errors in the data. It also accounts for all types of races, so to compare certain types of expenditures would require a lot of filtering. Our questions might be hard to answer in terms of finding average spending because of the amount of data. Additionally, comparing geographical spending compared to other years will be hard because the dataset lacks geographical information.
 We're gonna need to turn the dates numerical to analyze them better. There also seems to be spelling errors after we ran clean names. We'll need to find definitions for the candidate ID, spe_id, can_office_dis, sup_opp, pur, amndt_ind, and image_num. The FEC has a github which gives many descriptions, so we'll need to input those definitions to make the data clearer.
 
 ##Question 1: Which presidential candidates have spent the most during their campaign? Who has spent the least? Answer: Jon Tester is the candidate that has spent the most during the campaign. There are eight candiates though that are tied for the least amount of money spent on their campaign. 
@@ -69,6 +75,65 @@ clean_independent_expenditure |>
   summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
   arrange(desc(total))
 ```
+#Question 2: What are the most common payment purposes for payment in federal campaign finance data? What is the average amount paid per transaction for these top purposes? 
+Answer: Phonebanking -> average amount $980.15
+Production Costs -> average amount $177,963.6
+Media Production -> average amount $9263.04
+Advertisement Management Services -> average amount $928.37
+Canvassing -> average amount $65,250.19
+
+```{r}
+top_purposes <- clean_independent_expenditure |>
+  filter(!is.na(purpose), purpose != "") |>
+  group_by(purpose) |>
+  summarise(
+    count = n(),
+    average_amount = mean(expenditure_amount, na.rm = TRUE),
+    total_amount = sum(expenditure_amount, na.rm = TRUE)
+  ) |>
+  arrange(desc(count)) |>
+  slice_head(n = 10)
+
+# Show the result
+top_purposes
+```
+
+#Question 3: Which candidates receive the most independent support versus opposition, and how does spending differ between supporting and attacking candidates?
+Answer: Jon Tester received the most independent support versus opposition. Democrats tend to spend more money on elections and their campaigns compared to Republicans. 
+
+```{r}
+summary <- clean_independent_expenditure |>
+  filter(!is.na(candidate_name), support_or_oppose %in% c("S", "O")) |>
+  group_by(candidate_name, support_or_oppose) |>
+  summarise(total_spent = sum(expenditure_amount, na.rm = TRUE), .groups = "drop")
+
+top_supported <- summary |>
+  filter(support_or_oppose == "S")|>
+  arrange(desc(total_spent)) |>
+  head(5)
+
+top_opposed <- summary |>
+  filter(support_or_oppose == "O") |>
+  arrange(desc(total_spent)) |>
+  head(5)
+
+purpose_comparison <- clean_independent_expenditure |>
+  filter(!is.na(purpose), support_or_oppose %in% c("S", "O")) |>
+  group_by(candidate_name, support_or_oppose) |>
+  summarise(total_spent = sum(expenditure_amount, na.rm = TRUE), .groups = "drop") |>
+  arrange(desc(total_spent))
+
+purpose_comparison
+
+```
+
+
+#Question 4: How are donation patterns shifting geographically compared to 2020? 
+
+
+
+
+
 
 #Question 5: How are Republicans and Democrats spending their money differently? What are each party’s top spending points? 
 Answer: Democrats spent a lot of money on television ads, radio and media production. Republicans spent a lot of money on data harvesting. The Democrats top spending point was PLACED MEDIA: TV. The Republicans top spending point was Data Harvesting.
@@ -79,3 +144,7 @@ clean_independent_expenditure |>
   summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
   arrange(desc(total))
 ```
+
+
+
+
