@@ -83,6 +83,7 @@ Advertisement Management Services -> average amount $928.37
 Canvassing -> average amount $65,250.19
 
 ```{r}
+#This is using the cleaned data set to group by donation "purpose" and then summarizing by both the average donation amount using the mean function and also by the total amount per purpose using the sum function.  
 top_purposes <- clean_independent_expenditure |>
   filter(!is.na(purpose), purpose != "") |>
   group_by(purpose) |>
@@ -93,29 +94,36 @@ top_purposes <- clean_independent_expenditure |>
   ) |>
   arrange(desc(count)) |>
   slice_head(n = 10)
+#The slice_head(n=10) function filters the arrange() function to limit it to 10 options.
 
-# Show the result
 top_purposes
+#These results show that PAC's prioritized advertising and voter outreach (things like media production and phone banking) in order to have the greatest possible impact on the election.
 ```
 
 #Question 3: Which candidates receive the most independent support versus opposition, and how does spending differ between supporting and attacking candidates?
 Answer: Jon Tester received the most independent support versus opposition. Democrats tend to spend more money on elections and their campaigns compared to Republicans. 
 
 ```{r}
+#The main priority of this dataset is seeing which candidates had the most money spent in support or in opposition of them.
 summary <- clean_independent_expenditure |>
   filter(!is.na(candidate_name), support_or_oppose %in% c("S", "O")) |>
   group_by(candidate_name, support_or_oppose) |>
   summarise(total_spent = sum(expenditure_amount, na.rm = TRUE), .groups = "drop")
 
+#We used the cleaned_expenditures dataset and created a new summary dataset with it that grouped by candidate_name and support_or_oppose (which differentiates using an "S" or an "O" lettering. We then summarized by total spent on each using the "sum()" function.
+
+#This creates a sub data set from summary that shows the top five total expenditures that were in support of a candidate.
 top_supported <- summary |>
   filter(support_or_oppose == "S")|>
   arrange(desc(total_spent)) |>
   head(5)
 
+#This creates a sub data set from summary that shows the top five total expenditures that were in opposition of a candidate.
 top_opposed <- summary |>
   filter(support_or_oppose == "O") |>
   arrange(desc(total_spent)) |>
   head(5)
+
 
 purpose_comparison <- clean_independent_expenditure |>
   filter(!is.na(purpose), support_or_oppose %in% c("S", "O")) |>
@@ -123,6 +131,7 @@ purpose_comparison <- clean_independent_expenditure |>
   summarise(total_spent = sum(expenditure_amount, na.rm = TRUE), .groups = "drop") |>
   arrange(desc(total_spent))
 
+#By sorting the data by support_or_oppose and then arranging by total_spent, we can see that the most money spent was in opposition to Jon Tester in Montana's senate race. This makes sense because it was one of the most expensive senate races in history, and Republicans spent a lot of money to make sure that he lost his seat.
 purpose_comparison
 
 ```
@@ -145,7 +154,7 @@ Answer: PAC's that donated in both elections are:
 cleaned_2020_expenditures <- read_csv("data/cleaned_2020_expenditures.csv")
 ```
 ```{r}
-#cleaned the rest in Open Refine
+#This is using 2020 data that we plan to join in the next code block. We cleaned this data in OpenRefine and then used the same clean_names() function and column names to rename the columns to something more identifiable and universal.
 independent_expenditure_2020 <- cleaned_2020_expenditures |>
   clean_names() |>
   rename(
@@ -176,17 +185,23 @@ independent_expenditure_2020 <- cleaned_2020_expenditures |>
 ```
 
 ```{r}
+#We wanted to know which PAC's donated in both the 2020 and 2024 elections to determine which ones had continued engagement across multiple elections. This is using additional data from the FEC website to grab 2020 election expenditure data. We cleaned it in Open Refine before this.
 spenders_2020 <- independent_expenditure_2020|>
   select(spender_name) |>
   distinct()
 
+#This creates a new dataframe called spenders_2020 and then selects the one column spender_name().
 spenders_2024 <- clean_independent_expenditure |>
   select(spender_name) |>
   distinct()
 
+#This creates a similar dataframe and selects spender_name, but for 2024. We plan to join them together below.
 common_spenders <- inner_join(spenders_2020, spenders_2024, by = "spender_name")
 
+#This uses the inner_join function to join the two created dataframes together by the selected column name "spender_name()."
+
 common_spenders
+#This new "common_spenders()" dataframe shows every instance of "spender_name()" that appeared in both the 2020 and the 2024 data, telling us which PAC's donated in both elections.
 
 ```
 
